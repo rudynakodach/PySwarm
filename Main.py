@@ -10,10 +10,6 @@ import Report
 import Settings
 from pydirectinput import FAILSAFE
 FAILSAFE = False
-sleep(2)
-Enums.getField("StrawberryField").getBack(True)
-
-exit()
 
 Report.loadReader()
 
