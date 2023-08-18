@@ -1,0 +1,16 @@
+{
+    "sprinkler_slot": 1,
+    "private_server_link": null,
+
+    "hourlyReport": true,
+    "webhookUrl": null,
+
+    "pollen_container_sell_threshold_x": 1020,
+
+    "convert_baloons": true,
+
+    "honey_region_x1": 720,
+    "honey_region_y1": 30,
+    "honey_region_x2": 940,
+    "honey_region_y2": 50
+}
