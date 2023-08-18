@@ -3,12 +3,17 @@ import HotbarMacro.Window
 import threading
 from time import sleep, time
 import Watcher
+import pyautogui as pag
 import PySimpleGUI as sg
 import Enums
 import Report
 import Settings
 from pydirectinput import FAILSAFE
 FAILSAFE = False
+sleep(2)
+Enums.getField("StrawberryField").getBack(True)
+
+exit()
 
 Report.loadReader()
 

@@ -22,8 +22,9 @@ def goto(start: bool = True):
     sleep(7.5)
     Utils.getPdi().keyDown("space")
     Utils.press("a", 10)
-    Utils.press("d", 2)
     Utils.getPdi().keyUp("space")
+    Utils.press("d", .75)
+    Utils.press("s", .75)
     
     if start:
         Utils.placeSprinklers()

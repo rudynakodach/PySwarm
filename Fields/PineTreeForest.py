@@ -23,8 +23,9 @@ def goto(start: bool = True):
     sleep(10)
     # Landed near pine tree!
     Utils.rotateCamera(-1)
+    Utils.press("w", 2)
     Utils.press("a", 2.5)
-    Utils.placeSprinklers()
+    Utils.press("s", 1)
     
     if start:
         Utils.placeSprinklers()
@@ -33,7 +34,7 @@ def goto(start: bool = True):
         import Patterns.e_lol
         Watcher.run(Patterns.e_lol.e_lolPattern.execute, getBack)
 
-def getBack(loop: bool):
+def getBack(loop: bool = True):
     Utils.press("d", 10)
     Utils.press("s", 15)
     Utils.press("a", 15)

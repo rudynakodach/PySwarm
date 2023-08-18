@@ -10,14 +10,22 @@ def getWebhookUrl() -> str:
 def hourlyReport() -> bool:
     return bool(_getData()["hourlyReport"])
 
-def getContainerThreshold() -> int:
-    return int(_getData()["pollen_container_sell_threshold_x"])
+def getContainerThreshold() -> tuple:
+    data = _getData()
+    x1 = data["pollen_container_sell_threshold_x1"]
+    y1 = data["pollen_container_sell_threshold_y1"]
+    x2 = data["pollen_container_sell_threshold_width"]
+    y2 = data["pollen_container_sell_threshold_height"]
+    return (x1, y1, x2, y2)
 
 def convertBalloons() -> bool:
     return bool(_getData()["convert_balloons"])
 
 def getSprinklerSlot() -> int:
     return int(_getData()["spirnkler_slot"])
+
+def getPrivateServerLink() -> str | None:
+    return _getData()["private_server_link"]
 
 def getHoneyTextRegion() -> tuple:
     data = _getData()

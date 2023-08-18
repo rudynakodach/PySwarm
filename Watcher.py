@@ -67,19 +67,30 @@ def watchBackpack():
                             return
         sleep(5)
 
+found: bool = False
+
 def watchForEmptyPollen():
+    global found
     import pyautogui as pag
-    POLLEN_EMPTY = (107, 106, 99)
+    threshold = Settings.getContainerThreshold()
+    POLLEN_EMPTY = [(107, 106, 99), (108, 106, 99), (101, 100, 98), (118, 116, 104), (118, 116, 103)]
     while True:
-        image = pag.screenshot(region=(470, 0, 1900, 100))
-        containerThreshold = Settings.getContainerThreshold()
+        image = pag.screenshot(region=threshold)
         
-        if image.getpixel((containerThreshold - 470, 50)) == POLLEN_EMPTY:
+        if not found:
+            for x in range(image.width):
+                if found: break
+                for y in range(image.height):
+                    if found: break
+                    if image.getpixel((x, y)) in POLLEN_EMPTY:
+                        Utils._log("DEBUG", "Watcher", f"Empty cotnainer detected @ pixel {x}, {y}: {image.getpixel((x, y))}")
+                        found = True
+        else:
             if Settings.convertBalloons():
                 from Report import reader
                 import numpy as np
                 import cv2
-
+    
                 img = np.array(pag.screenshot(region=(750, 250, 1200-750, 875-250)))
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 for text in reader.readtext(img):
@@ -96,7 +107,8 @@ def watchForEmptyPollen():
                                     Utils._log("INFO", "Watcher", "Balloon contents converted. Waiting 15 secs for everything to convert for sure")
             else:
                 Utils._log("INFO", "Watcher", "Pollen container empty. Waiting 15 secs for everything to convert for sure")
-            sleep(15)
-            return
+                found = False
+                sleep(15)
+                return
         sleep(3)
 

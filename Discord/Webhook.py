@@ -13,7 +13,7 @@ class Webhook:
         if self.type == "message":
             raise ValueError("Cannot add embed fields in a message.")
         field = {"name": name, "value": value, "inline": inline}
-        self.fields.append(self.fields)
+        self.fields.append(field)
         
     def _build(self) -> dict:
         data = {}

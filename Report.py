@@ -21,8 +21,7 @@ def getHoney() -> int:
     gray_image = cv.cvtColor(image_np, cv.COLOR_BGR2GRAY)
     results = reader.readtext(gray_image)
     honey = int(results[0][1].replace(".", "").replace(",", "").replace("-", ""))
-    print(results)
-    Utils._log("DEBUG", "Report", f"Detected honey value: {honey} with {results[0][2]} confidence")
+    Utils._log("DEBUG", "Report", f"Detected honey value: {honey} ({Utils._formatNumber(honey)}) with {results[0][2]} confidence")
     return honey    
 
 def _getHoneyJsonData() -> dict:
@@ -30,17 +29,13 @@ def _getHoneyJsonData() -> dict:
         return json.load(f)
 
 def save(honey: int, fromConverting: bool = True):
-    # Load existing data
     with open("honey.json", "r") as f:
         data = json.load(f)
     
-    # Create new context
     ctx = {"time": time(), "honey": honey, "fromConverting": fromConverting}
     
-    # Append new context to history
     data["history"].append(ctx)
     
-    # Write updated data back to the file
     with open("honey.json", "w") as f:
         json.dump(data, f, indent="\t")
 

@@ -5,9 +5,12 @@
     "hourlyReport": true,
     "webhookUrl": null,
 
-    "pollen_container_sell_threshold_x": 1020,
+    "pollen_container_sell_threshold_x1": 1020,
+    "pollen_container_sell_threshold_y1": 30,
+    "pollen_container_sell_threshold_width": 10,
+    "pollen_container_sell_threshold_height": 10,
 
-    "convert_baloons": true,
+    "convert_balloons": false,
 
     "honey_region_x1": 720,
     "honey_region_y1": 30,

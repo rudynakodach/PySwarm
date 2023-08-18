@@ -24,13 +24,13 @@ class Utils:
 
     @staticmethod
     def rotateCamera(times: int):
-        times = times % 8
+        rot = abs(times) % 8
         if times > 0:
-            for _ in range(times):
+            for _ in range(rot):
                 Utils.press(".")
                 sleep(0.1)
         else:
-            for _ in range(abs(times)):
+            for _ in range(rot):
                 Utils.press(",")
                 sleep(0.1)
 
@@ -111,6 +111,3 @@ class Utils:
             return f"{number:.1f}"
         else:
             return f"{number:.1f}{units[unit_index]}"
-
-        
-    
