@@ -106,9 +106,9 @@ def waitForReport():
 
             hourlyProfit = newestEntry["honey"] - oldestEntry["honey"]
             total = newestEntry["honey"] + oldestEntry["honey"]
-            profitPerMinute = abs(hourlyProfit / 60)
+            profitPerMinute = Utils._formatNumber(abs(hourlyProfit / 60))
             timesConverted = len([convert for convert in honeyMadeInThisHour if convert["fromConverting"]])
-            avgHoneyPerConvert = abs(hourlyProfit/timesConverted)
+            avgHoneyPerConvert = Utils._formatNumber(abs(hourlyProfit/timesConverted))
 
             from Utils import Utils
             Utils._log("INFO", "HourlyReport", "Hourly report!")
