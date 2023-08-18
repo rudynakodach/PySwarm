@@ -20,7 +20,6 @@ def run(pattern, returnMethod):
     threading.Thread(target=move, daemon=True).start()
     threading.Thread(target=watchBackpack, daemon=True).start()
 
-    print(jobs)
     for slot, delay in jobs.items():
         if delay == 0: continue
         job = HotbarMacroJob(slot, delay)

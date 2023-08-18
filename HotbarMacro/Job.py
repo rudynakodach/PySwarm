@@ -2,7 +2,7 @@ from Utils import Utils
 from time import sleep
 import threading
 
-jobs = {2: 5}
+jobs = {}
 def set(slot, delay):
     jobs[slot] = delay
 
@@ -13,7 +13,7 @@ class HotbarMacroJob:
         self.status = "OK"
 
     def action(self):
-        print(f"Started clicking {self.slot} every {self.delay} sec")
+        Utils._log("INFO", "HotbarMacroWorker", f"Started clicking {self.slot} every {self.delay} sec.")
         while(True):
             if self.delay <= 0: self.disable(self, self.slot)
             sleep(self.delay)
