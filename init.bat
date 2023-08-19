@@ -7,6 +7,7 @@ pip install requests
 pip install opencv-python
 pip install PySimpleGUI
 pip install numpy
+pip install discord-webhook
 
 pip install --force-reinstall -v "Pillow==9.5.0"
 
