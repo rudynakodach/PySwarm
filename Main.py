@@ -14,17 +14,8 @@ FAILSAFE = False
 Report.loadReader()
 
 if Settings.hourlyReport(): 
-    def getStartHoneyValue():
-        import pygetwindow as pgw
-        while True:
-            if pgw.getActiveWindow() is not None:
-                if "Roblox" in pgw.getActiveWindow().title:
-                    Report.save(Report.getHoney(), False)
-                    threading.Thread(target=Report.waitForReport, daemon=True).start()
-                    break
-            sleep(5)
+    threading.Thread(target=Report.waitForReport, daemon=True).start()
 
-    threading.Thread(target=getStartHoneyValue, daemon=True).start()
 
 startWindowLayout = [
     [sg.Text("Makra")],
@@ -39,7 +30,6 @@ startWindowLayout = [
 window = sg.Window(title="Bocisz", layout=startWindowLayout)
 
 def startMacro(field: str):
-    sleep(2)
     Enums.getField(field).goto()
 
 while(True):
@@ -54,5 +44,3 @@ while(True):
     elif event == "stop":
         Utils._log("INFO", "Main", "Macro stop queued.")
         Watcher.STOP_MACRO = True
-
-

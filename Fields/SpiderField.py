@@ -7,7 +7,7 @@ def goto(start: bool = True):
     Utils.press("w", 7.5)
     Utils.press("space")
     sleep(0.25)
-    Utils.press("space")
+    Utils.press("w", .1)
     # Find the red cannon...
     for _ in range(6):
         if(Utils.findOnScreen("E.png")):
@@ -27,7 +27,7 @@ def goto(start: bool = True):
 
         import Watcher
         import Patterns.e_lol
-        Watcher.run(Patterns.e_lol.e_lolPattern.execute, getBack)
+        Watcher.run(Patterns.e_lol.e_lolPattern.execute, getBack, goto)
 
 def getBack(loop = False):
     Utils.press("w", 5)
@@ -37,13 +37,13 @@ def getBack(loop = False):
     Utils.press("d", 0.5)
     Utils.press("w", 5)
     Utils.press("d", 5)
-    Utils.press("s", 0.5)
+    Utils.press("s", 0.35)
     for _ in range(60):
         if Utils.findOnScreen("E.png"):
             Utils.press("e")
             break
         else:
-            Utils.press("a", 0.25)
+            Utils.press("a", 0.125)
     if not loop: return
     import Watcher
     Watcher.watchForEmptyPollen()

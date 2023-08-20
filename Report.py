@@ -20,8 +20,8 @@ def getHoney() -> int:
     # Convert the screenshot to grayscale
     gray_image = cv.cvtColor(image_np, cv.COLOR_BGR2GRAY)
     results = reader.readtext(gray_image)
-    honey = int(results[0][1].replace(".", "").replace(",", "").replace("-", ""))
-    Utils._log("DEBUG", "Report", f"Detected honey value: {honey} ({Utils._formatNumber(honey)}) with {results[0][2]} confidence")
+    honey = int(results[0][1].replace(".", "").replace(",", "").replace("-", "").replace(" ", ""))
+    Utils._log("DEBUG", "Report", f"Detected honey value: {Utils._formatNumber(honey)} ({Utils._abbreviateNumber(honey)}) with {results[0][2]} confidence")
     return honey    
 
 def _getHoneyJsonData() -> dict:
@@ -29,8 +29,7 @@ def _getHoneyJsonData() -> dict:
         return json.load(f)
 
 def save(honey: int, fromConverting: bool = True):
-    with open("honey.json", "r") as f:
-        data = json.load(f)
+    data = _getHoneyJsonData()
     
     ctx = {"time": time(), "honey": honey, "fromConverting": fromConverting}
     
@@ -73,7 +72,17 @@ def _findNewest(list: list[dict], fromConverting: bool = False) -> dict:
                         newest = list[i]
                 else:
                     newest = list[i]
-        print(newest)
+    return newest
+
+def _getLatest() -> dict:
+    list = _getHoneyJsonData()["history"]
+    newest = None
+    for i in range(len(list)):
+        if newest is None:
+            newest = list[i]
+        else:
+            if int(newest["time"]) < int(list[i]["time"]):
+                newest = list[i]
     return newest
 
 def waitForReport():
@@ -95,20 +104,26 @@ def waitForReport():
                 Utils._log("WARN", "HourlyReport", "No honey made in this hour was detected! Skipping this hourly report...")
                 continue
 
-            startedWith = _findNewest(honeyMadeInThisHour, True)
+            sinceStart = _findNewest(_getHoneyJsonData()["history"], False)
+            startedWith = _findNewest(honeyMadeInThisHour, True)["honey"]
             oldestEntry = _findOldest(honeyMadeInThisHour)
             newestEntry = _findNewest(honeyMadeInThisHour)
 
             hourlyProfit = newestEntry["honey"] - oldestEntry["honey"]
-            total = newestEntry["honey"] + oldestEntry["honey"]
             profitPerMinute = Utils._formatNumber(abs(hourlyProfit / 60))
             timesConverted = len([convert for convert in honeyMadeInThisHour if convert["fromConverting"]])
             avgHoneyPerConvert = Utils._formatNumber(abs(hourlyProfit/timesConverted))
 
             from Utils import Utils
             Utils._log("INFO", "HourlyReport", "Hourly report!")
-            Utils._log("INFO", "HourlyReport", f"Hourly profit: {hourlyProfit} ({profitPerMinute}/m). Started with {startedWith['honey']}. New total: {total}")
+            Utils._log("INFO", "HourlyReport", f"Hourly profit: {Utils._formatNumber(hourlyProfit)} ({profitPerMinute}/m). Started with {Utils._formatNumber(startedWith)}. New total: {Utils._formatNumber(newestEntry['honey'])}")
             Utils._log("INFO", "HourlyReport", f"Backpacks sold: {timesConverted} (avg. {avgHoneyPerConvert} per convert)")
+            
+            webhookUrl = Settings.getWebhookUrl()
+            if webhookUrl is not None:
+                import Discord.Webhook
+                Utils._saveScreenshot()
+                Discord.Webhook.hourlyReport(sinceStart["honey"], startedWith, newestEntry["honey"], honeyMadeInThisHour, timesConverted)
             waitingSince = time()
         else:
             sleep(5)

@@ -1,27 +1,67 @@
-import requests
+import pathlib
+import datetime
+from discord_webhook import DiscordWebhook, DiscordEmbed
+from Utils import Utils
+import Settings
 
-class Webhook:
-    def __init__(self, url, type: str = "embed" or "message"):
-        self.url = url
-        self.embeds = []
-        self.Title = None
-        self.username = None
-        self.Author = None
-        self.type = type
 
-    def addField(self, embed: list[dict], name: str = None, value: str = None, inline: bool = False):
-        if self.type == "message":
-            raise ValueError("Cannot add embed fields in a message.")
-        field = {"name": name, "value": value, "inline": inline}
-        self.fields.append(field)
-        
-    def _build(self) -> dict:
-        data = {}
-        if self.username is not None:
-            data["username"] = self.username
+colors = {
+    "yellow": "ffec4f",
+    "green": "42b341"
+}
 
-    def addEmbed(self):
-        self.embeds.append({})
+def _getWebhook() -> DiscordWebhook:
+    return DiscordWebhook(url=Settings.getWebhookUrl())
 
-    def post(self):
-        requests.post(url=self.url, headers={"Content-Type": "application/json"}, data=self._build())
+def hourlyReport(honeySinceStart: int, honeySinceLastHour: int, honeyNow: int, honeyMadeInThisHour: list[dict], timesConverted):
+    WEBHOOK = _getWebhook()
+
+    profitSinceStart = honeyNow - honeySinceStart
+    hourlyProfit = honeyNow - honeySinceLastHour
+    timesConverted = len([convert for convert in honeyMadeInThisHour if convert["fromConverting"]])
+    avgHoneyPerConvert = abs(hourlyProfit/timesConverted)
+    
+    embed = DiscordEmbed()
+    # embed.set_timestamp(datetime.datetime.now())
+    embed.set_author("PySwarm")
+    embed.set_title("Hourly Report")
+    embed.set_color(colors["yellow"])
+
+    embed.add_embed_field("Backpacks converted", f"`{timesConverted}`", inline=True)
+    embed.add_embed_field("Backpacks per minute", f"1 every `{(3600/timesConverted/60):.2f}` min")
+    embed.add_embed_field("Avg. honey per convert", f"`{Utils._formatNumber(avgHoneyPerConvert)}` ({Utils._abbreviateNumber(avgHoneyPerConvert)})", inline=True)
+
+    embed.add_embed_field("Honey made this hour", f"`{Utils._formatNumber(hourlyProfit)}` ({Utils._abbreviateNumber(hourlyProfit)})", inline=True)
+    embed.add_embed_field("Profit since start", f"`{Utils._formatNumber(profitSinceStart)}`", inline=True)
+    embed.add_embed_field("Avg. honey per minute", f"`{Utils._formatNumber(hourlyProfit/60)}` honey/min", inline=True)
+
+
+    # embed.add_embed_field()
+    WEBHOOK.add_embed(embed)
+    if pathlib.Path(pathlib.Path.cwd().as_posix() + "/images/temp/screenshot.png").exists():
+        WEBHOOK.add_file(Utils._getScreenshot(), filename="screenshot.png")
+    WEBHOOK.execute()
+
+def pollenConverted(lastKnownHoney: int, preConvertHoney: int, postConvertHoney: int):
+    WEBHOOK = _getWebhook()
+
+    honeyFromConverting = postConvertHoney - preConvertHoney
+    honeyFromLastConvert = preConvertHoney - lastKnownHoney  
+    honeyFromLastConvertAfterConverting = postConvertHoney - lastKnownHoney
+
+    embed = DiscordEmbed()
+
+    embed.set_author("PySwarm")
+    embed.set_title("Pollen Converted")
+    embed.set_color(colors["green"])
+
+    embed.add_embed_field("Honey from converting", f"`{Utils._formatNumber(honeyFromConverting)}` ({Utils._abbreviateNumber(honeyFromConverting)})")
+    embed.add_embed_field("Profit since last convert", f"Before converting now: `{Utils._formatNumber(honeyFromLastConvert)}` ({Utils._abbreviateNumber(honeyFromLastConvert)})\nAfter converting: `{Utils._formatNumber(honeyFromLastConvertAfterConverting)}` ({Utils._abbreviateNumber(honeyFromLastConvertAfterConverting)})")
+    embed.add_embed_field("Total honey", f"`{Utils._formatNumber(postConvertHoney)}` ({Utils._abbreviateNumber(postConvertHoney)})")
+
+    WEBHOOK.add_embed(embed)
+    if pathlib.Path(pathlib.Path.cwd().as_posix() + "/images/temp/screenshot.png").exists():
+        WEBHOOK.add_file(Utils._getScreenshot(), "screenshot.png")
+
+    WEBHOOK.execute()
+    pass

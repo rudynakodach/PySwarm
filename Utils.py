@@ -1,4 +1,5 @@
 import colorama
+import Settings 
 from colorama import Fore, Style
 import pydirectinput as pdi
 import pyautogui as pag
@@ -75,9 +76,15 @@ class Utils:
         for _ in range(4):
             Utils.press("space")
             sleep(0.1)
-            Utils.press("1")
+            Utils.press(str(Settings.getSprinklerSlot()))
             sleep(1)
     
+    @staticmethod
+    def resetCharacter():
+        Utils.press("escape")
+        Utils.press("r")
+        Utils.press("enter")
+
     @staticmethod
     def getWindowTitle() -> str:
         window = pgw.getActiveWindow()
@@ -99,7 +106,7 @@ class Utils:
         print(f"[{strftime(f'%Y.%m.%d %H:%M:%S')}] {LOGLEVELS[level]}[{level}] {source}: {Fore.WHITE}{message}")
 
     @staticmethod 
-    def _formatNumber(number: int) -> int:
+    def _abbreviateNumber(number: int) -> int:
         units = ['', 'K', 'M', 'B', 'T']
         unit_index = 0
         
@@ -108,6 +115,37 @@ class Utils:
             unit_index += 1
         
         if unit_index == 0:
-            return f"{number:.1f}"
+            return f"{number:.2f}"
         else:
-            return f"{number:.1f}{units[unit_index]}"
+            return f"{number:.2f}{units[unit_index]}"
+        
+    @staticmethod
+    def _formatNumber(number) -> str | None:
+        if isinstance(number, (int, float)):
+            parts = str(number).split(".")
+            integer_part = parts[0]
+            
+            formatted_integer_part = ""
+            num_digits = len(integer_part)
+            for i, digit in enumerate(integer_part):
+                formatted_integer_part += digit
+                if (num_digits - i - 1) % 3 == 0 and i != num_digits - 1:
+                    formatted_integer_part += ","
+            
+            formatted_number = formatted_integer_part
+            if len(parts) > 1:
+                formatted_number += "." + parts[1][:2]
+            
+            return formatted_number
+        
+    @staticmethod
+    def _saveScreenshot():
+        import pyautogui as pag
+        screenshot = pag.screenshot()
+        with open("images/temp/screenshot.png", "wb") as f:
+            screenshot.save(f, format="png")
+    
+    @staticmethod
+    def _getScreenshot():
+        with open("images/temp/screenshot.png", "rb") as f:
+            return f.read()

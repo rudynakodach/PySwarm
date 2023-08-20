@@ -2,8 +2,10 @@
     "sprinkler_slot": 1,
     "private_server_link": null,
 
+    "max_time_on_field": 600,
+
     "hourlyReport": true,
-    "webhookUrl": null,
+    "webhook_url": null,
 
     "pollen_container_sell_threshold_x1": 1020,
     "pollen_container_sell_threshold_y1": 30,
@@ -15,5 +17,10 @@
     "honey_region_x1": 720,
     "honey_region_y1": 30,
     "honey_region_x2": 940,
-    "honey_region_y2": 50
+    "honey_region_y2": 50,
+
+    "notif_region_x1": 1560,
+    "notif_region_y1": 925,
+    "notif_region_x2": 1915,
+    "notif_region_y2": 1030
 }
