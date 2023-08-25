@@ -35,6 +35,9 @@ def convertBalloons() -> bool:
 def getSprinklerSlot() -> int:
     return int(_getData()["sprinkler_slot"])
 
+def getSprinklerAmount() -> int:
+    return _getData()["sprinkler_amount"]
+
 def getPrivateServerLink() -> str | None:
     return _getData()["private_server_link"]
 

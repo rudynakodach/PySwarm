@@ -2,7 +2,7 @@ from Utils import Utils
 from time import sleep
 
 def goto(start: bool = True):
-    Utils.press("w", 1)
+    Utils.press("w", 5)
     Utils.rotateCamera(2)
     Utils.press("w", 7.5)
     Utils.press("space")
@@ -30,20 +30,11 @@ def goto(start: bool = True):
         Watcher.run(Patterns.e_lol.e_lolPattern.execute, getBack, goto)
 
 def getBack(loop = False):
-    Utils.press("w", 5)
-    Utils.press("a", 5)
-    Utils.rotateCamera(4)
-    Utils.press("w", 10)
-    Utils.press("d", 0.5)
-    Utils.press("w", 5)
-    Utils.press("d", 5)
-    Utils.press("s", 0.35)
-    for _ in range(60):
-        if Utils.findOnScreen("E.png"):
-            Utils.press("e")
-            break
-        else:
-            Utils.press("a", 0.125)
+    from . import StrawberryField
+
+    Utils.press("a", 7.5)
+    StrawberryField.getBack(False)
+
     if not loop: return
     import Watcher
     Watcher.watchForEmptyPollen()

@@ -1,3 +1,4 @@
+import pygetwindow as pgw
 from Utils import Utils
 import json
 import Settings
@@ -14,6 +15,13 @@ def loadReader():
     reader = easyocr.Reader(['en'])
 
 def getHoney() -> int:
+    while True:
+        window = pgw.getActiveWindow()
+        if window is not None:
+            if "Roblox" in window.title:
+                break
+        sleep(1)
+    
     image = pg.screenshot(region=Settings.getHoneyTextRegion())
     image_np = np.array(image)
     

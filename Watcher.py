@@ -17,12 +17,15 @@ hotbarMacros = []
 
 def run(pattern, returnMethod, fieldMethod):
     global AWAITING_STOP, CURRENT_PATTERN, RETURN_TO_HIVE_METHOD, GO_TO_FIELD_METHOD, INTERRUPTED, STOP_MACRO, hotbarMacros
+
     INTERRUPTED = False
     STOP_MACRO = False
     CURRENT_PATTERN = pattern
     GO_TO_FIELD_METHOD = fieldMethod
     RETURN_TO_HIVE_METHOD = returnMethod
+
     Report.save(Report.getHoney(), False)
+    
     threading.Thread(target=fieldTimer, daemon=True).start()
     threading.Thread(target=move, daemon=True).start()
     threading.Thread(target=watchBackpack, daemon=True).start()
@@ -41,14 +44,15 @@ def run(pattern, returnMethod, fieldMethod):
         GO_TO_FIELD_METHOD()
 
 def fieldTimer():
-    global INTERRUPTED
+    global AWAITING_STOP, READY_TO_RETURN, STOP_MACRO, INTERRUPTED
+    
     maxTime = Settings.getMaxTimeOnField()
     if maxTime is None:
         return
 
     arrived = time()
     while True:
-        if AWAITING_STOP or READY_TO_RETURN:
+        if AWAITING_STOP or READY_TO_RETURN or STOP_MACRO or INTERRUPTED:
             return
         
         if arrived + maxTime < time():
@@ -57,7 +61,7 @@ def fieldTimer():
             sleep(10)
             Utils.resetCharacter()
             return
-        sleep(10)
+        sleep(5)
 
 # TODO
 def disconnectHandler():
@@ -67,6 +71,7 @@ def disconnectHandler():
 
 def move():
     global AWAITING_STOP, CURRENT_PATTERN, READY_TO_RETURN, hotbarMacros
+
     while(True):
         CURRENT_PATTERN()
         if INTERRUPTED:
@@ -82,6 +87,7 @@ BACKPACK_FULL = (247, 0, 23)
 
 def watchBackpack():
     global AWAITING_STOP, CURRENT_PATTERN, RETURN_TO_HIVE_METHOD, READY_TO_RETURN
+
     while(True):
         if INTERRUPTED:
             return
@@ -109,6 +115,7 @@ found: bool = False
 preConvertHoney = None
 def watchForEmptyPollen():
     global found, preConvertHoney
+    
     preConvertHoney = Report.getHoney()
     found = False
 

@@ -2,12 +2,12 @@ from Utils import Utils
 from time import sleep
 
 def goto(start: bool = True):
-    Utils.press("w", 1)
+    Utils.press("w", 5)
     Utils.rotateCamera(2)
     Utils.press("w", 7.5)
     Utils.press("space")
     sleep(0.25)
-    Utils.press("space")
+    Utils.press("w", .1)
     # Find the red cannon...
     for _ in range(6):
         if(Utils.findOnScreen("E.png")):
@@ -23,7 +23,7 @@ def goto(start: bool = True):
     Utils.press("space")
     sleep(3)
     Utils.press("d", 12.5)
-    Utils.press("a", 3)
+    Utils.press("a", 2.75)
 
     if start:
         Utils.placeSprinklers()

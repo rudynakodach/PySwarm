@@ -2,32 +2,14 @@ from Utils import Utils
 from time import sleep
 
 def goto(start: bool = True):
-    Utils.press("w", 1)
-    Utils.rotateCamera(2)
-    Utils.press("w", 7.5)
-    Utils.press("space")
-    sleep(0.25)
-    Utils.press("w", .1)
-    # Find the red cannon...
-    for _ in range(6):
-        if(Utils.findOnScreen("E.png")):
-            Utils.rotateCamera(2)
-            Utils.press("e")
-            Utils.press("space")
-            break
-        else:
-            Utils.press("w", 0.25)
-    sleep(0.1)
-    Utils.press("space")
-    sleep(7.5)
-    Utils.getPdi().keyDown("space")
+    import Fields.SpiderField
+    Fields.SpiderField.goto(False)
+    Utils.press("s", .2)
     Utils.press("a", 10)
-    Utils.getPdi().keyUp("space")
-    Utils.press("d", .75)
-    Utils.press("s", .75)
-    
+    Utils.press("d", 1.5)
+
     if start:
-        Utils.placeSprinklers()
+        Utils.placeSprinklersDirectional("d", .2, False)
 
         import Watcher
         import Patterns.e_lol

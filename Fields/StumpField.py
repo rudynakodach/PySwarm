@@ -2,7 +2,7 @@ from Utils import Utils
 from time import sleep
 
 def goto(start: bool = True):
-    Utils.press("w", 1)
+    Utils.press("w", 5)
     Utils.rotateCamera(2)
     Utils.press("w", 7.5)
     Utils.press("space")

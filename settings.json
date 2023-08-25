@@ -1,8 +1,9 @@
 {
     "sprinkler_slot": 1,
+    "sprinkler_amount": 1,
     "private_server_link": null,
 
-    "max_time_on_field": 600,
+    "max_time_on_field": null,
 
     "hourlyReport": true,
     "webhook_url": null,

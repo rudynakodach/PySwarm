@@ -78,12 +78,31 @@ class Utils:
             sleep(0.1)
             Utils.press(str(Settings.getSprinklerSlot()))
             sleep(1)
+
+    
+    @staticmethod
+    def _placeSprinkler():
+        Utils.press("space")
+        sleep(0.1)
+        Utils.press(str(Settings.getSprinklerSlot()))
+        sleep(1)
+
+    _directionFlips = {"w": "s", "s": "w", "a": "d", "d": "a"}
+    @staticmethod
+    def placeSprinklersDirectional(direction: str, t: int | float, getBack: bool = True):
+        sprinklers: int = Settings.getSprinklerAmount()
+        for _ in range(sprinklers):
+            Utils.press(direction, t)
+            Utils._placeSprinkler()
+        if getBack:
+            Utils.press(Utils._directionFlips[direction], t * sprinklers)
     
     @staticmethod
     def resetCharacter():
         Utils.press("escape")
         Utils.press("r")
         Utils.press("enter")
+        sleep(7.5)
 
     @staticmethod
     def getWindowTitle() -> str:
