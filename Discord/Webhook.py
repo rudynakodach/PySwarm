@@ -56,7 +56,7 @@ def pollenConverted(lastKnownHoney: int, preConvertHoney: int, postConvertHoney:
     embed.set_color(colors["green"])
 
     embed.add_embed_field("Honey from converting", f"`{Utils._formatNumber(honeyFromConverting)}` ({Utils._abbreviateNumber(honeyFromConverting)})")
-    embed.add_embed_field("Profit since last convert", f"Before converting now: `{Utils._formatNumber(honeyFromLastConvert)}` ({Utils._abbreviateNumber(honeyFromLastConvert)})\nAfter converting: `{Utils._formatNumber(honeyFromLastConvertAfterConverting)}` ({Utils._abbreviateNumber(honeyFromLastConvertAfterConverting)})")
+    embed.add_embed_field("Profit since last convert", f"Honey gain on field: `{Utils._formatNumber(honeyFromLastConvert)}` ({Utils._abbreviateNumber(honeyFromLastConvert)})\nHoney from converting: `{Utils._formatNumber(honeyFromLastConvertAfterConverting)}` ({Utils._abbreviateNumber(honeyFromLastConvertAfterConverting)})")
     embed.add_embed_field("Total honey", f"`{Utils._formatNumber(postConvertHoney)}` ({Utils._abbreviateNumber(postConvertHoney)})")
 
     WEBHOOK.add_embed(embed)
@@ -64,4 +64,3 @@ def pollenConverted(lastKnownHoney: int, preConvertHoney: int, postConvertHoney:
         WEBHOOK.add_file(Utils._getScreenshot(), "screenshot.png")
 
     WEBHOOK.execute()
-    pass
