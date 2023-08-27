@@ -89,6 +89,17 @@ def _findNewest(list: list[dict], fromConverting: bool = False) -> dict:
                     newest = list[i]
     return newest
 
+def _getLatest() -> dict:
+    list = _getHoneyJsonData()["history"]
+    newest = None
+    for i in range(len(list)):
+        if newest is None:
+            newest = list[i]
+        else:
+            if int(newest["time"]) < int(list[i]["time"]):
+                newest = list[i]
+    return newest
+
 def waitForReport():
     waitingSince = time()
     while True:
