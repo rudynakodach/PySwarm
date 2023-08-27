@@ -48,11 +48,11 @@ def open():
 
         window.destroy()
 
-    def _exit():
+    def _exitCallback():
         pass
 
     window = Toplevel()
-    window.protocol("WM_DELETE_WINDOW", _exit)
+    window.protocol("WM_DELETE_WINDOW", _exitCallback)
 
     for i in range(7):
         slot = i + 1
