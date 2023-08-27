@@ -28,6 +28,7 @@ def run(pattern, returnMethod, fieldMethod):
     
     threading.Thread(target=fieldTimer, daemon=True).start()
     threading.Thread(target=move, daemon=True).start()
+    threading.Thread(target=playerDeathHandler, daemon=True).start()
     threading.Thread(target=watchBackpack, daemon=True).start()
 
     for slot, delay in jobs.items():
@@ -36,12 +37,29 @@ def run(pattern, returnMethod, fieldMethod):
         hotbarMacros.append(job)
         threading.Thread(target=job.action, daemon=True).start()
 
-    while all([not AWAITING_STOP, not INTERRUPTED]):
-        sleep(10)
-    if INTERRUPTED:
-        sleep(10)
+    while True:
+        if all([not INTERRUPTED, not STOP_MACRO, not AWAITING_STOP]):
+            sleep(10)
+        else:
+            break
+    if INTERRUPTED and not STOP_MACRO:
         Utils._log("INFO", "Watcher", "Returning back to field after interruption...")
+        sleep(10)
         GO_TO_FIELD_METHOD()
+
+# doesnt work for some reason
+def playerDeathHandler():
+    global AWAITING_STOP, READY_TO_RETURN, STOP_MACRO, INTERRUPTED
+    
+    while True:
+        if STOP_MACRO or INTERRUPTED or AWAITING_STOP or READY_TO_RETURN:
+            return
+        
+        if Utils.findOnScreen("died.png"):
+            INTERRUPTED = True
+            return
+        
+        sleep(2)
 
 def fieldTimer():
     global AWAITING_STOP, READY_TO_RETURN, STOP_MACRO, INTERRUPTED
