@@ -5,7 +5,6 @@ pip install pygetwindow
 pip install colorama
 pip install requests
 pip install opencv-python
-pip install PySimpleGUI
 pip install numpy
 pip install discord-webhook
 

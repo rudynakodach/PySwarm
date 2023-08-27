@@ -3,44 +3,55 @@ import HotbarMacro.Window
 import threading
 import Watcher
 import pyautogui as pag
-import PySimpleGUI as sg
+from tkinter import * 
+import re
 import Enums
 import Report
 import Settings
 from pydirectinput import FAILSAFE
 FAILSAFE = False
 
-Report.loadReader()
+threading.Thread(target=Report.loadReader, daemon=True).start()
+
+def _getStartHoneyValue():
+    Report.setStartingHoneyValue(Report.getHoney())
+threading.Thread(target=_getStartHoneyValue, daemon=True)
 
 if Settings.hourlyReport(): 
     threading.Thread(target=Report.waitForReport, daemon=True).start()
 
-startWindowLayout = [
-    [sg.Text("Makra")],
-    [sg.Button("Sunflower", key="field SunflowerField"), sg.Button("Dandelion", key="field DandelionField"), sg.Button("Mushroom", key="field MushroomField"), sg.Button("Blue Flower", key="field BlueFlowerField")],
-    [sg.Button("Spider", key="field SpiderField"), sg.Button("Bamboo", key="field BambooField"), sg.Button("Strawberry", key="field StrawberryField")],
-    [sg.Button("Pineapple", key="field PineapplePatch"), sg.Button("Stump", key="field StumpField")],
-    [sg.Button("Rose", key="field RoseField"), sg.Button("Cactus", key="field CactusField"), sg.Button("Pine Tree", key="field PineTreeForest"), sg.Button("Pumpkin", key="field PumpkinPatch")],
-    [sg.Button("Mountain Top", key="field MountainTopField")],
-    [sg.Button("Coconut", key="field CoconutField"), sg.Button("Pepper", key="field PepperPatch")],
-    [sg.Button("hotbar", key="OPEN_HOTBAR_MACRO_WINDOW")],
-    [sg.Button("Stop", key="stop")]
+def startMacro(field: str):
+    field = Enums.getField(field)
+    threading.Thread(target=field.goto, daemon=True).start()
+
+def split(text) -> str:
+    text = re.findall("[A-Z][^A-Z]*", text)
+    return " ".join(text)
+
+ROOT = Tk()
+
+macroFrame = LabelFrame(ROOT, text="Makra", padx=5, pady=5)
+macroFrame.grid(row=1, column=1, padx=10, pady=10)
+
+layout = [
+    ["SunflowerField", "MushroomField", "DandelionField", "BlueFlowerField", "CloverField"],
+    ["StrawberryField", "SpiderField", "BambooField"],
+    ["PineapplePatch", "StumpField"],
+    ["CactusField", "PumpkinPatch", "PineTreeForest", "RoseField"],
+    ["MountainTopField", "CoconutField", "PepperPatch"]
 ]
 
-window = sg.Window(title="Bocisz", layout=startWindowLayout)
+for row_idx, fieldGroup in enumerate(layout):
+    for col_idx, field in enumerate(fieldGroup):
+        btn_text = split(field)
+        btn = Button(macroFrame, text=btn_text, command=lambda field=field: startMacro(field))
+        btn.grid(row=row_idx, column=col_idx, padx=10, pady=10, sticky="nsew")
 
-def startMacro(field: str):
-    Enums.getField(field).goto()
+controlsFrame = LabelFrame(ROOT, text="Kontrola", padx=5, pady=5)
+controlsFrame.grid(row=2, column=1, padx=10, pady=10)
 
-while(True):
-    event, values = window.read()
-    if event == sg.WINDOW_CLOSED:
-        break
-    if "field" in event:
-        Watcher.STOP_MACRO = False
-        threading.Thread(target=startMacro, args=(event.split(" ")[1],), daemon=True).start()
-    elif event == "OPEN_HOTBAR_MACRO_WINDOW":
-        HotbarMacro.Window.hotbarMacroWindow()
-    elif event == "stop":
-        Utils._log("INFO", "Main", "Macro stop queued.")
-        Watcher.STOP_MACRO = True
+Button(controlsFrame, text="Stop", command=lambda: setattr(Watcher, "AWAITING_STOP", True)).grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+Button(controlsFrame, text="Interrupt", command=lambda: setattr(Watcher, "INTERRUPTED", True)).grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
+Button(controlsFrame, text="Hotbar", command=HotbarMacro.Window.open).grid(row=0, column=2, padx=10, pady=10, sticky="nsew")
+
+ROOT.mainloop()
