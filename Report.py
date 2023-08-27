@@ -30,7 +30,14 @@ def getHoney() -> int:
     results = reader.readtext(gray_image)
     honey = int(results[0][1].replace(".", "").replace(",", "").replace("-", "").replace(" ", ""))
     Utils._log("DEBUG", "Report", f"Detected honey value: {Utils._formatNumber(honey)} ({Utils._abbreviateNumber(honey)}) with {results[0][2]} confidence")
-    return honey    
+    return honey
+
+def setStartingHoneyValue(honey: int):
+    data = _getHoneyJsonData()
+    data["since_start"] = honey
+
+    with open("honey.json", "w") as f:
+        json.dump(data, f)
 
 def _getHoneyJsonData() -> dict:
     with open("honey.json", "r") as f:
@@ -82,17 +89,6 @@ def _findNewest(list: list[dict], fromConverting: bool = False) -> dict:
                     newest = list[i]
     return newest
 
-def _getLatest() -> dict:
-    list = _getHoneyJsonData()["history"]
-    newest = None
-    for i in range(len(list)):
-        if newest is None:
-            newest = list[i]
-        else:
-            if int(newest["time"]) < int(list[i]["time"]):
-                newest = list[i]
-    return newest
-
 def waitForReport():
     waitingSince = time()
     while True:
@@ -112,8 +108,8 @@ def waitForReport():
                 Utils._log("WARN", "HourlyReport", "No honey made in this hour was detected! Skipping this hourly report...")
                 continue
 
-            sinceStart = _findNewest(_getHoneyJsonData()["history"], False)
-            startedWith = _findNewest(honeyMadeInThisHour, True)["honey"]
+            sinceStart = _getHoneyJsonData()["since_start"]
+            startedWith = _findOldest(honeyMadeInThisHour, False)["honey"]
             oldestEntry = _findOldest(honeyMadeInThisHour)
             newestEntry = _findNewest(honeyMadeInThisHour)
 
@@ -122,7 +118,6 @@ def waitForReport():
             timesConverted = len([convert for convert in honeyMadeInThisHour if convert["fromConverting"]])
             avgHoneyPerConvert = Utils._formatNumber(abs(hourlyProfit/timesConverted))
 
-            from Utils import Utils
             Utils._log("INFO", "HourlyReport", "Hourly report!")
             Utils._log("INFO", "HourlyReport", f"Hourly profit: {Utils._formatNumber(hourlyProfit)} ({profitPerMinute}/m). Started with {Utils._formatNumber(startedWith)}. New total: {Utils._formatNumber(newestEntry['honey'])}")
             Utils._log("INFO", "HourlyReport", f"Backpacks sold: {timesConverted} (avg. {avgHoneyPerConvert} per convert)")
